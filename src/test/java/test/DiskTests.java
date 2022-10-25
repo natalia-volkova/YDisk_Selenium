@@ -18,7 +18,7 @@ public class DiskTests extends TestBase{
         app.goTo().yandexDisk();
         app.goTo().switchSecondOpenedTab();
         app.disk().createFolder(folderName);
-        Assert.assertTrue(app.disk().isFolderCreated());
+        Assert.assertTrue(app.disk().isFolderCreated(folderName));
         app.disk().openFolder(folderName);
         app.disk().createDocument(fileName);
         app.disk().closeDocument();
