@@ -40,6 +40,14 @@ public class MainPageObject {
     return wait.until(ExpectedConditions.presenceOfElementLocated(by));
   }
 
+  public WebElement waitForElementPresent(String locator, String error_message, int timeout) {
+    By by = this.getLocatorString(locator);
+    WebDriverWait wait = new WebDriverWait(driver, timeout);
+    wait.withMessage(error_message + "\n");
+
+    return wait.until(ExpectedConditions.presenceOfElementLocated(by));
+  }
+
   public WebElement waitForElementAndClick(String locator, String error_message) {
     By by = this.getLocatorString(locator);
     WebDriverWait wait = new WebDriverWait(driver, 5);
@@ -83,7 +91,16 @@ public class MainPageObject {
   {
     WebElement element = waitForElementPresent(locator, error_message);
     Actions action = new Actions(driver);
-    action.doubleClick(element);
+    action.doubleClick(element).perform();
+    return element;
+
+  }
+
+  public WebElement moveCursorToElement(String locator, String error_message)
+  {
+    WebElement element = waitForElementPresent(locator, error_message);
+    Actions action = new Actions(driver);
+    action.moveToElement(element).perform();
     return element;
 
   }
@@ -92,9 +109,14 @@ public class MainPageObject {
   {
 
     Actions action = new Actions(driver);
-    action.doubleClick(element);
+    action.doubleClick(element).perform();
 
 
+  }
+
+  public void moveCursorToElement(WebElement element, String error_message){
+    Actions action = new Actions(driver);
+    action.moveToElement(element).perform();
   }
   private By getLocatorString(String locator_with_type) {
     String[] exploded_locator = locator_with_type.split(Pattern.quote(":"), 2);
@@ -112,13 +134,7 @@ public class MainPageObject {
     }
   }
 
-  public void closeLastTab(){
-    ArrayList<String> newTab = new ArrayList<String>(driver.getWindowHandles());
 
-    driver.switchTo().window(newTab.get(newTab.size()-1));
-    driver.close();
-    driver.switchTo().window(newTab.get(newTab.size()-2));
-  }
 
 
 

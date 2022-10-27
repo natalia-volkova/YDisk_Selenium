@@ -17,10 +17,9 @@ public class ApplicationManager {
   WebDriver driver;
 
   private NavigationPageObject navigationPageObject;
-
   private AuthorizationPageObject authorizationPageObject;
   private DiskActionsPageObject diskActionsPageObject;
-
+  private DocumentPageObject documentPageObject;
   private String browser;
 
 
@@ -44,6 +43,7 @@ public class ApplicationManager {
     navigationPageObject = new NavigationPageObject(this);
     authorizationPageObject = new AuthorizationPageObject(this);
     diskActionsPageObject = new DiskActionsPageObject(this);
+    documentPageObject = new DocumentPageObject(this);
 
 
   }
@@ -59,13 +59,17 @@ public class ApplicationManager {
     return authorizationPageObject;
   }
 
-  public NavigationPageObject goTo() {
+  public NavigationPageObject launch() {
     return navigationPageObject;
   }
 
 
   public DiskActionsPageObject disk() {
     return diskActionsPageObject;
+  }
+
+  public DocumentPageObject document() {
+    return documentPageObject;
   }
 
 

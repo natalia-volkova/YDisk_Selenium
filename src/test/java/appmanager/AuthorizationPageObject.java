@@ -17,7 +17,7 @@ public class AuthorizationPageObject extends MainPageObject {
 
   public void clickAuthButton(){
     this.waitForElementPresent(LOGIN_BUTTON
-            ,"Cannot find auth button",7 );
+            ,"Cannot find auth button",20 );
     this.waitForElementAndClick(LOGIN_BUTTON, "Cannot find login button");
   }
 
@@ -39,6 +39,12 @@ public class AuthorizationPageObject extends MainPageObject {
   }
 
   public void logout(){
+    NavigationPageObject navigationPageObject = new NavigationPageObject(app);
+    navigationPageObject.switchMainTab();
+    //navigationPageObject.invokeUserMenu();
+    navigationPageObject.selectLogoutItem();
+    waitForElementPresent(LOGIN_BUTTON, "The logout is not performed successfully", 15);
+
 
   }
 }

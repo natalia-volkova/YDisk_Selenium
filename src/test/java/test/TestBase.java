@@ -33,7 +33,7 @@ Logger logger = LoggerFactory.getLogger(TestBase.class);
     context.setAttribute("app", app);
   }
 
-  @AfterSuite
+  @AfterSuite(alwaysRun = true)
   public void tearDown() {
     app.stop();
   }

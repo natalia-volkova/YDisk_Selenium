@@ -9,20 +9,21 @@ public class DiskTests extends TestBase{
     private String password = "Test##2022";
 
     @Test
-    public void createFileViaYandexDisk(){
-        String folderName= "TestFolder";
-        String fileName="TestFile";
+    public void createDocumentViaYandexDisk(){
+        String folderName= "TestFolder5";
+        String fileName="TestFile5";
 
         app.authorize().login(login, password);
-        app.goTo().invokeUserMenu();
-        app.goTo().yandexDisk();
-        app.goTo().switchSecondOpenedTab();
+        app.launch().invokeUserMenu();
+        app.launch().selectYandexDiskItem();
+        app.launch().switchSecondOpenedTab();
         app.disk().createFolder(folderName);
-        Assert.assertTrue(app.disk().isFolderCreated(folderName));
+        Assert.assertTrue(app.disk().isFolderPresent(folderName));
         app.disk().openFolder(folderName);
         app.disk().createDocument(fileName);
-        app.disk().closeDocument();
-        Assert.assertTrue(app.disk().isDocumentCreated(fileName));
+
+        app.document().closeDocument();
+        Assert.assertTrue(app.disk().isDocumentPresent(fileName));
 
 
 
@@ -30,7 +31,7 @@ public class DiskTests extends TestBase{
 
     }
 
-    @AfterSuite
+    @AfterSuite(alwaysRun = true)
     public void suiteCleanup(){
         app.authorize().logout();
     }

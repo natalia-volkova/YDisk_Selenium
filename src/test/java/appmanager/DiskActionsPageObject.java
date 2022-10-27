@@ -1,8 +1,10 @@
 package appmanager;
 
-import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.testng.Assert;
 
 public class DiskActionsPageObject extends MainPageObject {
     public DiskActionsPageObject(ApplicationManager app) {
@@ -11,17 +13,21 @@ public class DiskActionsPageObject extends MainPageObject {
     private static final String
             CREATE_BUTTON="xpath://span[contains(@class, 'create-resource')]/button",
             CREATE_FOLDER="xpath://span[contains(text(), 'Папку')]",
-            CREATE_DOCUMENT="xpath://span[contains(text(), 'Папку')]",
-            CREATE_TABLE="xpath://span[contains(text(), 'Папку')]",
-            CREATE_PTT="xpath://span[contains(text(), 'Папку')]",
+            CREATE_DOCUMENT="xpath://span[contains(text(), 'Текстовый документ')]",
+            CREATE_TABLE="xpath://span[contains(text(), 'Таблицу')]",
+            CREATE_PTT="xpath://span[contains(text(), 'Презентацию')]",
             ITEM_NAME_INPUT="xpath://form[contains(@class, 'rename-dialog')]//input",
-            SAVE_ITEM_BUTTON="xpath://span[contains(text(), 'Сохранить')]/..";
+            SAVE_ITEM_BUTTON="xpath://span[contains(text(), 'Сохранить')]/..",
+
+            CREATE_ITEM_BUTTON="xpath://div/button/span[contains(text(), 'Создать')]/..";
 
 
 
     public void clickCreateButton() {
         waitForElementAndClick(CREATE_BUTTON, "The create button click can't be performed");
     }
+
+
 
     public void clickCreateDocument(){
         waitForElementAndClick(CREATE_DOCUMENT, "The create document button click can't be performed");
@@ -62,7 +68,22 @@ public class DiskActionsPageObject extends MainPageObject {
         }
 
         enterFileName(itemName);
-        waitForElementAndClick(SAVE_ITEM_BUTTON, "The save button is not clickable");
+
+        if (itemType.equals("folder")){
+
+            waitForElementAndClick(SAVE_ITEM_BUTTON, "The save button is not clickable");
+           // waitForElementNotPresent(SAVE_ITEM_BUTTON, "The create folder form is still shown.", 5);
+            return;
+        }
+
+        else{
+            waitForElementAndClick(CREATE_ITEM_BUTTON, "The create button is not clickable");
+            waitForElementNotPresent(CREATE_ITEM_BUTTON, "The create document form is still shown.", 5);
+            app.launch().switchLastTab();
+            DocumentPageObject documentPageObject = new DocumentPageObject(app);
+            Assert.assertTrue(documentPageObject.isTitleShown());
+            }
+
     }
 
     public void createFolder(String name){
@@ -73,29 +94,42 @@ public class DiskActionsPageObject extends MainPageObject {
         createItem("doc", name);
     }
 
+    public void createTable(String name){
+        createItem("table", name);
+    }
+    public void createPresentation(String name){
+        createItem("ptt", name);
+    }
     public void openFolder(String name){
-        doubleClickElement(findItemByNameAndExtension(name, ""), "The double click can't be performed!");
+        WebElement folder = findItemByNameAndExtension(name, "folder");
+        wait.until(ExpectedConditions.elementToBeClickable(folder)).click();
+
+
+        doubleClickElement(folder, "The double click can't be performed!");
+        String openedFolderLocator = "xpath://h1[@title='"+name+"']";
+        waitForElementPresent(openedFolderLocator, "The folder is not opened");
 
     }
 
     public WebElement findItemByNameAndExtension(String name, String extension) {
         String itemLocator;
-        if (extension.equals(""))
+        if (extension.equals("folder"))
         {
-            itemLocator="xpath://span[text()='"+name+"']";
+            itemLocator="xpath://div[@class='listing__items']//span[text()='"+name+"']/../..";
         }
-        else itemLocator="xpath://span[text()='"+name+'.'+extension+"']";
+        else {itemLocator="xpath://span[text()='"+name+'.'+extension+"']";}
         return waitForElementPresent(itemLocator, "The required item is not found!");
 
 
     }
 
     public void closeDocument(){
-        closeLastTab();
+        NavigationPageObject navigationPageObject= new NavigationPageObject(app);
+        navigationPageObject.closeLastTab();
 
     }
 
-    public boolean isFileCreated(String fileName, String extension) {
+    public boolean isFilePresent(String fileName, String extension) {
         try{
             findItemByNameAndExtension(fileName,extension);
             return true;
@@ -107,20 +141,22 @@ public class DiskActionsPageObject extends MainPageObject {
 
     }
 
-    public boolean isDocumentCreated(String filename){
-        return isFileCreated(filename, "docx");
+
+
+    public boolean isDocumentPresent(String filename){
+        return isFilePresent(filename, "docx");
     }
 
-    public boolean isFolderCreated(String filename){
-        return isFileCreated(filename, "");
+    public boolean isFolderPresent(String filename){
+        return isFilePresent(filename, "folder");
     }
 
-    public boolean isTableCreated(String filename){
-        return isFileCreated(filename, "xls");
+    public boolean isTablePresent(String filename){
+        return isFilePresent(filename, "xlsx");
     }
 
-    public boolean isPresentationCreated(String filename){
-        return isFileCreated(filename, "pttx");
+    public boolean isPresentationPresent(String filename){
+        return isFilePresent(filename, "pttx");
     }
 
 }
